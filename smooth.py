@@ -1,7 +1,7 @@
 import numpy as np
 
 def smooth(rawdata,tol=0.0025,sigR=1e-3):
-	
+
 	X = rawdata[np.all(rawdata != 0, axis=1)]
 	
 	m = np.mean(X,axis=0)
