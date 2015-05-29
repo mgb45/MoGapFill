@@ -25,10 +25,10 @@ def smooth(rawdata,tol=0.0025,sigR=1e-3):
 	state.insert(0,np.random.normal(0.0,1.0,d))
 	cov_pred.insert(0,1e9*np.eye(d))
 	state_pred.insert(0,np.random.normal(0.0,1.0,d))
-	for i in range(1,rawdata.shape[0]):
+	for i in range(1,rawdata.shape[0]+1):
 
-		z =  rawdata[i,(rawdata[i,:]!=0)]
-		H = np.diag(rawdata[i,:]!=0)
+		z =  rawdata[i-1,(rawdata[i-1,:]!=0)]
+		H = np.diag(rawdata[i-1,:]!=0)
 		H = H[~np.all(H == 0, axis=1)]
 		Ht = np.dot(H,V[0:d,:].T)
 		
@@ -44,8 +44,8 @@ def smooth(rawdata,tol=0.0025,sigR=1e-3):
 		
 	print 'Backward Pass'
 	y = np.zeros(rawdata.shape)
-	y[rawdata.shape[0]-1,:] = np.dot(V[0:d,:].T,state[rawdata.shape[0]-1]) + m
-	for i in range(rawdata.shape[0]-2,0,-1):
+	y[-1,:] = np.dot(V[0:d,:].T,state[-1]) + m
+	for i in range(len(state)-2,0,-1):
 		state[i] =  state[i] + np.dot(np.dot(cov[i],np.linalg.inv(cov_pred[i])),(state[i+1] - state_pred[i+1]))
 		cov[i] =  cov[i] + np.dot(np.dot(np.dot(cov[i],np.linalg.inv(cov_pred[i])),(cov[i+1] - cov_pred[i+1])),cov[i])
 		
