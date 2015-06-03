@@ -1,15 +1,15 @@
 import numpy as np
 
-def smooth(rawdata,tol=0.0025,sigR=1e-3):
+def smooth(rawdata,tol=0.0025,sigR=1e-3,keepOriginal=True):
 
-	X = rawdata[np.all(rawdata != 0, axis=1)]
+	X = rawdata[~np.isnan(rawdata).any(axis=1)]
 	
 	m = np.mean(X,axis=0)
-		
+	
 	print 'Computing SVD...'
 	
 	U, S, V = np.linalg.svd(X - m)
-		
+	
 	print 'done'
 
 	d = np.nonzero(np.cumsum(S)/np.sum(S)>(1-tol))[0][0]
@@ -21,14 +21,14 @@ def smooth(rawdata,tol=0.0025,sigR=1e-3):
 	state_pred = []
 	cov_pred = []
 	cov = []
-	cov.insert(0,1e9*np.eye(d))
+	cov.insert(0,1e12*np.eye(d))
 	state.insert(0,np.random.normal(0.0,1.0,d))
-	cov_pred.insert(0,1e9*np.eye(d))
+	cov_pred.insert(0,1e12*np.eye(d))
 	state_pred.insert(0,np.random.normal(0.0,1.0,d))
 	for i in range(1,rawdata.shape[0]+1):
 
-		z =  rawdata[i-1,(rawdata[i-1,:]!=0)]
-		H = np.diag(rawdata[i-1,:]!=0)
+		z =  rawdata[i-1,~np.isnan(rawdata[i-1,:])]
+		H = np.diag(~np.isnan(rawdata[i-1,:]))
 		H = H[~np.all(H == 0, axis=1)]
 		Ht = np.dot(H,V[0:d,:].T)
 		
@@ -51,6 +51,7 @@ def smooth(rawdata,tol=0.0025,sigR=1e-3):
 		
 		y[i-1,:] = np.dot(V[0:d,:].T,state[i]) + m
 	
-	y[rawdata != 0] = rawdata[rawdata != 0]
+	if (keepOriginal):
+		y[~np.isnan(rawdata)] = rawdata[~np.isnan(rawdata)]
 	
 	return y

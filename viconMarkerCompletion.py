@@ -6,11 +6,11 @@ import ViconNexus
 import numpy as np
 import smooth
 
-print 'Starting'
-
 vicon = ViconNexus.ViconNexus()
 
 subject = vicon.GetSubjectNames()[0]
+
+print 'Gap filling for subject ', subject
 
 markers = vicon.GetMarkerNames(subject)
 
@@ -22,12 +22,13 @@ rawData = np.zeros((frames,len(markers)*3))
 for i in range(0,len(markers)):
 	rawData[:,3*i-3], rawData[:,3*i-2], rawData[:,3*i-1], E = vicon.GetTrajectory(subject,markers[i])
 	
-	rawData[E==0,3*i-3] = 0;
-	rawData[E==0,3*i-2] = 0;
-	rawData[E==0,3*i-1] = 0;
+	rawData[np.asarray(E)==0,3*i-3] = np.nan;
+	rawData[np.asarray(E)==0,3*i-2] = np.nan;
+	rawData[np.asarray(E)==0,3*i-1] = np.nan;
+	
 
 # Run low dimensional smoothing
-Y = smooth.smooth(rawData)
+Y = smooth.smooth(rawData,tol =1e-2,sigR=1e-3,keepOriginal=True)
 
 print 'Writing new trajectories'
 #Create new smoothed trjectories
