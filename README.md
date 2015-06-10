@@ -9,7 +9,7 @@ Matlab - run testSmoother.m, you'll see a visualisation of the code in action on
 
 Python - run testSmoother.py, you'll get an output file out.csv, containing the data with gaps closed
 
-Nexus 2.1.1 - install a suitable Python environment (I used Anaconda Python), make sure .py extensions are set to open with Python. Then, apply the viconMarkerCompletion.py script in Nexus, like this https://youtu.be/LqD9rh1WItQ
+Nexus 2.1.1 - install a suitable Python environment (I used Anaconda Python), make sure .py extensions are set to open with Python. Then, apply the viconMarkerCompletion.py script in Nexus, like this http://youtu.be/3HJTkRU0Nes
 
 Hope it helps.
 
