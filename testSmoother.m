@@ -14,15 +14,18 @@ bins = setdiff(1:length(markers),unique(r));
 Train = markers(bins,:);
 
 %% Project Training data into pca space
-[U,V,l] = pca(Train(:,:));
+%[U,V,l] = pca(Train(:,:));
+[U,S,V] = svd(bsxfun(@minus,Train,mean(Train)));
 mPCA = mean(Train(:,:));
+
+l = diag(S);
 
 %% Determine required number dimensions for model fitting
 d = find(abs(cumsum(l)./sum(l)-1) < tol,1,'first');
 
 %% Find model process noise
 sigma_a = var(diff(Train));
-Q = U(:,1:d)'*((diag(sigma_a)).^2)*U(:,1:d);
+Q = V(:,1:d)'*((diag(sigma_a)).^2)*V(:,1:d);
 
 %% Forward stage
 Estimate = zeros(length(markers),size(markers,2));
@@ -39,7 +42,7 @@ for j = 2:length(markers)+1
     H(sum(H,2)==0,:) = [];
     %% Measurement noise
     R = sigmaR*eye(size(H,1));
-    Ht = H*U(:,1:d);
+    Ht = H*V(:,1:d);
 
     %% Extract valid measurements
     z = markers(j-1,~isnan(markers(j-1,:)))';
@@ -53,7 +56,7 @@ for j = 2:length(markers)+1
 
     cov{j} = (eye(d) - K*Ht)*cov_pred{j};
 
-    est = U(:,1:d)*state{j} + mPCA';
+    est = V(:,1:d)*state{j} + mPCA';
 
     frate = frate+toc;
     
@@ -84,7 +87,7 @@ for j = length(state)-1:-1:2
     state_new{j} = state{j} + cov{j}*inv(cov_pred{j})*(state{j+1} - state_pred{j+1});
     cov_new{j} = cov{j} + cov{j}*inv(cov_pred{j})*(cov{j+1} - cov_pred{j+1})*cov{j};
 
-    Estimate(j-1,:) = U(:,1:d)*state_new{j} + mPCA';
+    Estimate(j-1,:) = V(:,1:d)*state_new{j} + mPCA';
 
     frate = frate + toc;
     
@@ -102,5 +105,5 @@ for j = length(state)-1:-1:2
 end
 
 fprintf ('\nDone\n')
-Estimate(end,:) = U(:,1:d)*state_new{end} + mPCA';
+Estimate(end,:) = V(:,1:d)*state_new{end} + mPCA';
 
