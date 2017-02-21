@@ -11,6 +11,8 @@ Python - run testSmoother.py, you'll get an output file out.csv, containing the 
 
 Nexus 2.1.1 - install a suitable Python environment (I used Anaconda Python), make sure .py extensions are set to open with Python. Then, apply the viconMarkerCompletion.py script in Nexus, like this https://youtu.be/_pq57P1lKGg
 
+Note that the method requires that at least one marker be present at all times for inference, so will fail to fill gaps when all markers go missing.
+
 Hope it helps.
 
 
