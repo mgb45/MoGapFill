@@ -5,7 +5,7 @@ import time
 
 print 'Loading data from data.csv'
 
-with open('gait-raw.csv', 'rb') as csvfile:
+with open('gait-raw.csv', 'r') as csvfile:
 	reader = csv.reader(csvfile, delimiter=',')
 	x = list(reader)
 	
