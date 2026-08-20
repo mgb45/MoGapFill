@@ -9,7 +9,7 @@ description = "Low-dimensional Kalman smoother for filling gaps in motion captur
 readme = "README.md"
 license = "MIT"
 authors = [{ name = "Michael Burke" }]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "numpy>=1.21",
     "ezc3d>=1.5",
@@ -27,4 +27,4 @@ packages = ["src/mogapfill"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py39"
+target-version = "py310"
